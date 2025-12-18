@@ -1,11 +1,51 @@
 package com.example.demo.entity;
-
 import java.time.LocalDateTime;
-
 public class EvidenceRecord {
     private Long id;
     private String evidenceType;
-    private String details;
-    private String issuedBy;
-    private LocalDateTime issuedAt;
+    private String content;
+    private String submittedBy;
+    private LocalDateTime submittedAt;
+    
+    public EvidenceRecord() {
+    }
+    public EvidenceRecord(Long id, String evidenceType, String content, String submittedBy,
+            LocalDateTime submittedAt) {
+        this.id = id;
+        this.evidenceType = evidenceType;
+        this.content = content;
+        this.submittedBy = submittedBy;
+        this.submittedAt = submittedAt;
+    }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getEvidenceType() {
+        return evidenceType;
+    }
+    public void setEvidenceType(String evidenceType) {
+        this.evidenceType = evidenceType;
+    }
+    public String getContent() {
+        return content;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public String getSubmittedBy() {
+        return submittedBy;
+    }
+    public void setSubmittedBy(String submittedBy) {
+        this.submittedBy = submittedBy;
+    }
+    public LocalDateTime getSubmittedAt() {
+        return submittedAt;
+    }
+    public void setSubmittedAt(LocalDateTime submittedAt) {
+        this.submittedAt = submittedAt;
+    }
+    
 }
