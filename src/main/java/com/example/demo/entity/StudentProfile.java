@@ -2,7 +2,6 @@ package com.example.demo.entity;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 public class StudentProfile {
-
     @Id
     private Long id;
     private String studentId;
