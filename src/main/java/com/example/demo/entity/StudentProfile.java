@@ -1,6 +1,8 @@
 package com.example.demo.entity;
+import jakarta.persistence.Id;
+import java.time.LocalDateTime;
+public class StudentProfile {
 
-public class StudentProfile{
     @Id
     private Long id;
     private String studentId;
@@ -11,70 +13,81 @@ public class StudentProfile{
     private boolean isRepeatOffender;
     private LocalDateTime createdAt;
 
-    public Long getId() {A
-    return id;
-}
-public StudentProfile() {
-}
+    public StudentProfile() {
+    }
 
-public void setId(Long id) {
-    this.id = id;
-}
+    public StudentProfile(Long id, String studentId, String name, String email,String program, int yearLevel,boolean isRepeatOffender, LocalDateTime createdAt) {
+        this.id = id;
+        this.studentId = studentId;
+        this.name = name;
+        this.email = email;
+        this.program = program;
+        this.yearLevel = yearLevel;
+        this.isRepeatOffender = isRepeatOffender;
+        this.createdAt = createdAt;
+    }
 
-public String getStudentId() {
-    return studentId;
-}
+    public Long getId() {
+        return id;
+    }
 
-public void setStudentId(String studentId) {
-    this.studentId = studentId;
-}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-public String getName() {
-    return name;
-}
+    public String getStudentId() {
+        return studentId;
+    }
 
-public void setName(String name) {
-    this.name = name;
-}
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
 
-public String getEmail() {
-    return email;
-}
+    public String getName() {
+        return name;
+    }
 
-public void setEmail(String email) {
-    this.email = email;
-}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-public String getProgram() {
-    return program;
-}
+    public String getEmail() {
+        return email;
+    }
 
-public void setProgram(String program) {
-    this.program = program;
-}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-public int getYearLevel() {
-    return yearLevel;
-}
+    public String getProgram() {
+        return program;
+    }
 
-public void setYearLevel(int yearLevel) {
-    this.yearLevel = yearLevel;
-}
+    public void setProgram(String program) {
+        this.program = program;
+    }
 
-public boolean isRepeatOffender() {
-    return isRepeatOffender;
-}
+    public int getYearLevel() {
+        return yearLevel;
+    }
 
-public void setRepeatOffender(boolean repeatOffender) {
-    isRepeatOffender = repeatOffender;
-}
+    public void setYearLevel(int yearLevel) {
+        this.yearLevel = yearLevel;
+    }
 
-public LocalDateTime getCreatedAt() {
-    return createdAt;
-}
+    public boolean isRepeatOffender() {
+        return isRepeatOffender;
+    }
 
-public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-}
+    public void setRepeatOffender(boolean repeatOffender) {
+        this.isRepeatOffender = repeatOffender;
+    }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
