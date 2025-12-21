@@ -33,7 +33,6 @@ public class PenaltyActionServiceImpl implements PenaltyActionService {
             penaltyAction.setIssuedAt(LocalDateTime.now());
         }
 
-        // business rule: OPEN → UNDER_REVIEW
         if ("OPEN".equals(integrityCase.getStatus())) {
             integrityCase.setStatus("UNDER_REVIEW");
             integrityCaseRepository.save(integrityCase);
