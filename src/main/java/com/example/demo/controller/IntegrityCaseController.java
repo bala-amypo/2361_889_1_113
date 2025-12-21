@@ -1,14 +1,16 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.IntegrityCase;
-import com.example.demo.service.IntegrityCaseService;
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Optional;
+
+import com.example.demo.entity.IntegrityCase;
+import com.example.demo.service.IntegrityCaseService;
 
 @RestController
-@RequestMapping("/api/integrity-cases")
+@RequestMapping("/cases")
 public class IntegrityCaseController {
 
     private final IntegrityCaseService integrityCaseService;
@@ -19,25 +21,35 @@ public class IntegrityCaseController {
 
     @PostMapping
     public ResponseEntity<IntegrityCase> createCase(@RequestBody IntegrityCase integrityCase) {
-        IntegrityCase created = integrityCaseService.createCase(integrityCase);
-        return ResponseEntity.ok(created);
+        return new ResponseEntity<>(
+                integrityCaseService.createCase(integrityCase),
+                HttpStatus.CREATED
+        );
     }
 
-    @PutMapping("/{caseId}/status")
-    public ResponseEntity<IntegrityCase> updateCaseStatus(@PathVariable Long caseId, @RequestParam String status) {
-        IntegrityCase updated = integrityCaseService.updateCaseStatus(caseId, status);
-        return ResponseEntity.ok(updated);
+    @PutMapping("/{id}/status")
+    public ResponseEntity<IntegrityCase> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+
+        return ResponseEntity.ok(
+                integrityCaseService.updateCaseStatus(id, status)
+        );
     }
 
     @GetMapping("/student/{studentId}")
-    public ResponseEntity<List<IntegrityCase>> getCasesByStudent(@PathVariable Long studentId) {
-        List<IntegrityCase> cases = integrityCaseService.getCasesByStudent(studentId);
-        return ResponseEntity.ok(cases);
+    public ResponseEntity<List<IntegrityCase>> getCasesByStudent(
+            @PathVariable Long studentId) {
+
+        return ResponseEntity.ok(
+                integrityCaseService.getCasesByStudent(studentId)
+        );
     }
 
-    @GetMapping("/{caseId}")
-    public ResponseEntity<IntegrityCase> getCaseById(@PathVariable Long caseId) {
-        Optional<IntegrityCase> caseOpt = integrityCaseService.getCaseById(caseId);
-        return caseOpt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    @GetMapping("/{id}")
+    public ResponseEntity<IntegrityCase> getCaseById(@PathVariable Long id) {
+        return integrityCaseService.getCaseById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
