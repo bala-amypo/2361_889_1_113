@@ -1,18 +1,33 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "repeat_offender_records")
 public class RepeatOffenderRecord {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private int totalCases;
     private String lastincidentDate; 
     private String flagSeverity;
+
     public RepeatOffenderRecord() {
     }
+
     public RepeatOffenderRecord(Long id, int totalCases, String lastincidentDate, String flagSeverity) {
         this.id = id;
         this.totalCases = totalCases;
         this.lastincidentDate = lastincidentDate;
         this.flagSeverity = flagSeverity;
     }
+
     public Long getId() {
         return id;
     }
