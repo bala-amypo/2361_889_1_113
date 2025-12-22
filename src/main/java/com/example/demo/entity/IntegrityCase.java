@@ -2,17 +2,27 @@ package com.example.demo.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "integrity_cases")
 public class IntegrityCase {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private String CourseCode;
     private String InstructName;
     private String description;
     private String status;
     private LocalDate incidentdate;
     private LocalDateTime createdAt;
+    
     public IntegrityCase(Long id, String courseCode, String instructName, String description, String status,
             LocalDate incidentdate, LocalDateTime createdAt) {
         this.id = id;
@@ -23,8 +33,10 @@ public class IntegrityCase {
         this.incidentdate = incidentdate;
         this.createdAt = createdAt;
     }
+    
     public IntegrityCase() {
     }
+    
     public Long getId() {
         return id;
     }

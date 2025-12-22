@@ -1,15 +1,28 @@
 package com.example.demo.entity;
 
 import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "penalty_actions")
 public class PenaltyAction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String penaltyType;
     private String details;
     private String issuedBy;
     private LocalDateTime issuedAt;
+
     public PenaltyAction() {
     }
+
     public PenaltyAction(Long id, String penaltyType, String details, String issuedBy, LocalDateTime issuedAt) {
         this.id = id;
         this.penaltyType = penaltyType;
@@ -17,6 +30,7 @@ public class PenaltyAction {
         this.issuedBy = issuedBy;
         this.issuedAt = issuedAt;
     }
+
     public Long getId() {
         return id;
     }
@@ -47,5 +61,4 @@ public class PenaltyAction {
     public void setIssuedAt(LocalDateTime issuedAt) {
         this.issuedAt = issuedAt;
     }
-    
 }

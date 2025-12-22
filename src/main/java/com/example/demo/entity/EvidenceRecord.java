@@ -1,7 +1,20 @@
 package com.example.demo.entity;
+
 import java.time.LocalDateTime;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "evidence_records")
 public class EvidenceRecord {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String evidenceType;
     private String content;
     private String submittedBy;
@@ -9,6 +22,7 @@ public class EvidenceRecord {
     
     public EvidenceRecord() {
     }
+
     public EvidenceRecord(Long id, String evidenceType, String content, String submittedBy,
             LocalDateTime submittedAt) {
         this.id = id;
@@ -17,6 +31,7 @@ public class EvidenceRecord {
         this.submittedBy = submittedBy;
         this.submittedAt = submittedAt;
     }
+
     public Long getId() {
         return id;
     }
@@ -47,5 +62,4 @@ public class EvidenceRecord {
     public void setSubmittedAt(LocalDateTime submittedAt) {
         this.submittedAt = submittedAt;
     }
-    
 }
