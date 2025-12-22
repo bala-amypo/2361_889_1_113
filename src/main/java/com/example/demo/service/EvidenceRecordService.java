@@ -1,7 +1,11 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.EvidenceRecord;
+import java.util.List;
 
 public interface EvidenceRecordService {
-    EvidenceRecord submitEvidence(EvidenceRecord evidenceRecord);
+    EvidenceRecord savedata(EvidenceRecord data);
+    List<EvidenceRecord> retdata();
+    EvidenceRecord id(Long id);
+    void remove(Long id);
 }
