@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import com.example.demo.service.EvidenceService;
+import com.example.demo.service.EvidenceRecordService;
 
 @RestController
 public class EvidenceRecordController {
 
     @Autowired
-    EvidenceService src;
+    EvidenceRecordService src;
 
     @PostMapping("/post")
     public EvidenceRecord postdata(@RequestBody EvidenceRecord evidence) {
