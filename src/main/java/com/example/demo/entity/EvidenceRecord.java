@@ -23,8 +23,7 @@ public class EvidenceRecord {
     public EvidenceRecord() {
     }
 
-    public EvidenceRecord(Long id, String evidenceType, String content, String submittedBy,
-            LocalDateTime submittedAt) {
+    public EvidenceRecord(Long id, String evidenceType, String content, String submittedBy,LocalDateTime submittedAt) {
         this.id = id;
         this.evidenceType = evidenceType;
         this.content = content;
