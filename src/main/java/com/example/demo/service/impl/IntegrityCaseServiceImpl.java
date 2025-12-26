@@ -1,47 +1,49 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.IntegrityCase;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.service.IntegrityCaseService;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class IntegrityCaseServiceImpl implements IntegrityCaseService {
+    private final IntegrityCaseRepository integrityCaseRepository;
 
-    private List<IntegrityCase> list = new ArrayList<>();
-
-    @Override
-    public IntegrityCase savedata(IntegrityCase data) {
-        list.add(data);
-        return data;
+    public IntegrityCaseServiceImpl(IntegrityCaseRepository integrityCaseRepository) {
+        this.integrityCaseRepository = integrityCaseRepository;
     }
 
     @Override
-    public List<IntegrityCase> retdata() {
-        return list;
+    public IntegrityCase createCase(IntegrityCase integrityCase) {
+        if (integrityCase.getStudentProfile() == null) {
+            throw new IllegalArgumentException("StudentProfile must be provided");
+        }
+        return integrityCaseRepository.save(integrityCase);
     }
 
     @Override
-    public IntegrityCase id(Long id) {
-        for (IntegrityCase data : list) {
-            if (data.getId().equals(id)) {
-                return data;
-            }
+    public IntegrityCase updateCaseStatus(Long caseId, String newStatus) {
+        if (caseId == null) {
+            throw new IllegalArgumentException("Case ID cannot be null");
         }
-        return null;
+        IntegrityCase integrityCase = integrityCaseRepository.findById(caseId)
+            .orElseThrow(() -> new IllegalArgumentException("Case not found"));
+        integrityCase.setStatus(newStatus);
+        return integrityCaseRepository.save(integrityCase);
     }
 
     @Override
-    public void remove(Long id) {
-        IntegrityCase toRemove = null;
-        for (IntegrityCase data : list) {
-            if (data.getId().equals(id)) {
-                toRemove = data;
-                break;
-            }
+    public List<IntegrityCase> getCasesByStudent(Long studentId) {
+        return integrityCaseRepository.findByStudentProfile_Id(studentId);
+    }
+
+    @Override
+    public Optional<IntegrityCase> getCaseById(Long caseId) {
+        if (caseId == null) {
+            return Optional.empty();
         }
-        if (toRemove != null) {
-            list.remove(toRemove);
-        }
+        return integrityCaseRepository.findById(caseId);
     }
 }

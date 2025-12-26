@@ -1,47 +1,33 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.EvidenceRecord;
+import com.example.demo.repository.EvidenceRecordRepository;
+import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.service.EvidenceRecordService;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class EvidenceRecordServiceImpl implements EvidenceRecordService {
+    private final EvidenceRecordRepository evidenceRecordRepository;
+    private final IntegrityCaseRepository integrityCaseRepository;
 
-    private List<EvidenceRecord> list = new ArrayList<>();
-
-    @Override
-    public EvidenceRecord savedata(EvidenceRecord data) {
-        list.add(data);
-        return data;
+    public EvidenceRecordServiceImpl(EvidenceRecordRepository evidenceRecordRepository,
+                                   IntegrityCaseRepository integrityCaseRepository) {
+        this.evidenceRecordRepository = evidenceRecordRepository;
+        this.integrityCaseRepository = integrityCaseRepository;
     }
 
     @Override
-    public List<EvidenceRecord> retdata() {
-        return list;
-    }
-
-    @Override
-    public EvidenceRecord id(Long id) {
-        for (EvidenceRecord data : list) {
-            if (data.getId().equals(id)) {
-                return data;
-            }
+    public EvidenceRecord submitEvidence(EvidenceRecord evidenceRecord) {
+        if (evidenceRecord.getIntegrityCase() == null) {
+            throw new IllegalArgumentException("Valid IntegrityCase must be provided");
         }
-        return null;
-    }
-
-    @Override
-    public void remove(Long id) {
-        EvidenceRecord toRemove = null;
-        for (EvidenceRecord data : list) {
-            if (data.getId().equals(id)) {
-                toRemove = data;
-                break;
-            }
+        
+        Long caseId = evidenceRecord.getIntegrityCase().getId();
+        if (caseId == null || !integrityCaseRepository.existsById(caseId)) {
+            throw new IllegalArgumentException("Valid IntegrityCase must be provided");
         }
-        if (toRemove != null) {
-            list.remove(toRemove);
-        }
+        
+        return evidenceRecordRepository.save(evidenceRecord);
     }
 }

@@ -4,8 +4,8 @@ import com.example.demo.entity.StudentProfile;
 import java.util.List;
 
 public interface StudentProfileService {
-    StudentProfile savedata(StudentProfile data);
-    List<StudentProfile> retdata();
-    StudentProfile id(Long id);
-    void remove(Long id);
+    StudentProfile createStudent(StudentProfile studentProfile);
+    StudentProfile getStudentById(Long id);
+    List<StudentProfile> getAllStudents();
+    StudentProfile updateRepeatOffenderStatus(Long studentId);
 }
