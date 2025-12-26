@@ -15,6 +15,9 @@ public interface IntegrityCaseRepository extends JpaRepository<IntegrityCase, Lo
     List<IntegrityCase> findByStudentProfile(StudentProfile studentProfile);
 
     List<IntegrityCase> findByStudentProfile_Id(Long studentId);
+
+    
+    long countByStudentProfile_Id(Long studentId);
     
     @Query("SELECT ic FROM IntegrityCase ic WHERE ic.studentProfile.studentId = :studentIdentifier")
     List<IntegrityCase> findByStudentIdentifier(@Param("studentIdentifier") String studentIdentifier);
