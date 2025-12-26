@@ -7,7 +7,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
-import com.example.demo.service.RepeatOffenderCalculator;
+import com.example.demo.util.RepeatOffenderCalculator;
 import com.example.demo.service.StudentProfileService;
 import org.springframework.stereotype.Service;
 import java.util.List;
