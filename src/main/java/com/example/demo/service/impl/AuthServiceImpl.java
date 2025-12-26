@@ -6,7 +6,7 @@ import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.AppUser;
 import com.example.demo.entity.Role;
 import com.example.demo.repository.RoleRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.AppUserRepository; 
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.AuthService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,16 +17,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-    private final UserRepository userRepository;
+    private final AppUserRepository appUserRepository; 
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, 
-                          PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
-                          JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
+    public AuthServiceImpl(AppUserRepository appUserRepository, RoleRepository roleRepository, 
+                           PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+                           JwtTokenProvider jwtTokenProvider) {
+        this.appUserRepository = appUserRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
             new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
 
-        AppUser user = userRepository.findByEmail(loginRequest.getEmail())
+        AppUser user = appUserRepository.findByEmail(loginRequest.getEmail())
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String primaryRole = user.getRoles().iterator().next().getName();
@@ -50,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(RegisterRequest registerRequest) {
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+        if (appUserRepository.existsByEmail(registerRequest.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
 
@@ -58,9 +58,9 @@ public class AuthServiceImpl implements AuthService {
             .orElseThrow(() -> new IllegalArgumentException("Role not found"));
 
         AppUser user = new AppUser(registerRequest.getFullName(), registerRequest.getEmail(), 
-                                  passwordEncoder.encode(registerRequest.getPassword()));
+                                   passwordEncoder.encode(registerRequest.getPassword()));
         user.getRoles().add(role);
         
-        userRepository.save(user);
+        appUserRepository.save(user);
     }
 }

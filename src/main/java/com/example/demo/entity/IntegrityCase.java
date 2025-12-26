@@ -9,7 +9,6 @@ import java.util.List;
 @Entity
 @Table(name = "integrity_cases")
 public class IntegrityCase {
-    // ... (keep existing fields and constructor) ...
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,18 +45,14 @@ public class IntegrityCase {
         this.createdAt = LocalDateTime.now();
     }
     
-    // ... (Keep existing constructors) ...
-
-    // ... (Keep existing getters/setters) ...
+    
 
     public List<PenaltyAction> getPenaltyActions() { return penaltyActions; }
     public void setPenaltyActions(List<PenaltyAction> penaltyActions) { this.penaltyActions = penaltyActions; }
     
-    // ADD THIS METHOD to satisfy the Test:
     public List<PenaltyAction> getPenalties() {
         return this.penaltyActions;
     }
-    // ... (rest of getters/setters)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public StudentProfile getStudentProfile() { return studentProfile; }

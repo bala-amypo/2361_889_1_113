@@ -1,7 +1,7 @@
 package com.example.demo.security;
 
 import com.example.demo.entity.AppUser;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.AppUserRepository; // Updated import
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -14,15 +14,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final AppUserRepository appUserRepository; // Updated type
 
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CustomUserDetailsService(AppUserRepository appUserRepository) {
+        this.appUserRepository = appUserRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        AppUser user = userRepository.findByEmail(email)
+        AppUser user = appUserRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         Collection<GrantedAuthority> authorities = user.getRoles().stream()
