@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.IntegrityCase;
 import com.example.demo.repository.IntegrityCaseRepository;
+import com.example.demo.repository.StudentProfileRepository; // Added import
 import com.example.demo.service.IntegrityCaseService;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -10,9 +11,12 @@ import java.util.Optional;
 @Service
 public class IntegrityCaseServiceImpl implements IntegrityCaseService {
     private final IntegrityCaseRepository integrityCaseRepository;
+    private final StudentProfileRepository studentProfileRepository; // Added field
 
-    public IntegrityCaseServiceImpl(IntegrityCaseRepository integrityCaseRepository) {
+    public IntegrityCaseServiceImpl(IntegrityCaseRepository integrityCaseRepository, 
+                                    StudentProfileRepository studentProfileRepository) {
         this.integrityCaseRepository = integrityCaseRepository;
+        this.studentProfileRepository = studentProfileRepository;
     }
 
     @Override
