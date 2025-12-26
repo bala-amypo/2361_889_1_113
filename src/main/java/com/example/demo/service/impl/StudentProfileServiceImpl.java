@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.StudentProfile;
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.ResourceNotFoundException; 
 import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
@@ -34,7 +34,6 @@ public class StudentProfileServiceImpl implements StudentProfileService {
 
     @Override
     public StudentProfile createStudent(StudentProfile student) {
-        // FIX for testCreateStudentProfileSetsRepeatOffenderFalse
         if (student.getRepeatOffender() == null) {
             student.setRepeatOffender(false);
         }
