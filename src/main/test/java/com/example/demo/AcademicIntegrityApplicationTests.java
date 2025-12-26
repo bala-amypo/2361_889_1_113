@@ -100,7 +100,7 @@ public class AcademicIntegrityApplicationTests {
         return p;
     }
 
-    // --- Servlet Tests ---
+    // --- Servlet Tests (1-8) ---
     private static class TestableServlet extends BasicServlet {
         @Override public void doGet(HttpServletRequest req, HttpServletResponse resp) { try { super.doGet(req, resp); } catch (Exception e) { throw new RuntimeException(e); } }
         @Override public void doPost(HttpServletRequest req, HttpServletResponse resp) { try { super.doPost(req, resp); } catch (Exception e) { throw new RuntimeException(e); } }
@@ -116,13 +116,12 @@ public class AcademicIntegrityApplicationTests {
 
     // --- Service / CRUD Tests (9-23) ---
 
-    // FIX 1: Ensure RepeatOffender defaults to false
+    // FIX 1: Explicitly testing that NULL input results in FALSE
     @Test(groups = "crud", priority = 9)
     public void testCreateStudentProfileSetsRepeatOffenderFalse() {
         StudentProfile s = new StudentProfile();
         s.setId(1L);
-        // We pass null for repeat offender to test the service logic
-        s.setRepeatOffender(null); 
+        s.setRepeatOffender(null); // Input is null
         
         when(studentProfileRepository.save(any(StudentProfile.class))).thenAnswer(i -> i.getArgument(0));
         
@@ -162,13 +161,12 @@ public class AcademicIntegrityApplicationTests {
         Assert.assertEquals(updated.getStatus(), "CLOSED");
     }
 
-    // FIX 2: Ensure Case is attached to Evidence
+    // FIX 2: Ensure Case is attached to Evidence record
     @Test(groups = "crud", priority = 14)
     public void testSubmitEvidenceSuccess() {
         IntegrityCase c = sampleCase(1L, sampleStudent(1L));
         EvidenceRecord e = sampleEvidence(1L, c);
-        // Ensure the case is set on the evidence
-        e.setIntegrityCase(c); 
+        e.setIntegrityCase(c); // Ensure connection
         
         when(integrityCaseRepository.existsById(1L)).thenReturn(true);
         when(evidenceRecordRepository.save(any(EvidenceRecord.class))).thenReturn(e);
@@ -188,20 +186,19 @@ public class AcademicIntegrityApplicationTests {
         Assert.assertEquals(saved.getPenaltyType(), "WARNING");
     }
 
-    // FIX 3: CRITICAL - Mock the correct Repository Method (countByStudentProfile_Id)
+    // FIX 3: MOCK THE CORRECT METHOD (countByStudentProfile_Id)
     @Test(groups = "crud", priority = 16)
     public void testUpdateRepeatOffenderStatusWithTwoCasesMarksRepeat() {
         StudentProfile s = sampleStudent(1L);
-        
         when(studentProfileRepository.findById(1L)).thenReturn(Optional.of(s));
         
-        // THIS MUST MATCH THE SERVICE CALL EXACTLY
+        // This MUST match the service call exactly
         when(integrityCaseRepository.countByStudentProfile_Id(1L)).thenReturn(2L);
         
         when(studentProfileRepository.save(any(StudentProfile.class))).thenAnswer(i -> i.getArgument(0));
         
         StudentProfile updated = studentProfileService.updateRepeatOffenderStatus(1L);
-        Assert.assertTrue(updated.getRepeatOffender(), "Student with 2 cases should count as Repeat Offender");
+        Assert.assertTrue(updated.getRepeatOffender(), "Should be Repeat Offender if cases >= 2");
     }
 
     @Test(groups = "crud", priority = 17)
@@ -260,7 +257,7 @@ public class AcademicIntegrityApplicationTests {
         studentProfileService.getStudentById(null);
     }
 
-    // FIX 4: Verify the interaction that actually happens
+    // FIX 4: Correct Verification
     @Test(groups = "crud", priority = 71)
     public void testIntegrityCaseServiceUsesStudentRepositoryOnCreate() {
         StudentProfile s = sampleStudent(13L);
@@ -270,7 +267,6 @@ public class AcademicIntegrityApplicationTests {
 
         integrityCaseService.createCase(c);
 
-        // Verification: The service is expected to save the case
         verify(integrityCaseRepository).save(c);
     }
 
