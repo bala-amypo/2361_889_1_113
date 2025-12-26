@@ -1,55 +1,48 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "repeat_offender_records")
 public class RepeatOffenderRecord {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int totalCases;
-    private String lastincidentDate; 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_profile_id", nullable = false)
+    private StudentProfile studentProfile;
+
+    @Column(nullable = false)
+    private Integer totalCases;
+
+    private LocalDate firstIncidentDate;
+
+    @Column(nullable = false)
     private String flagSeverity;
 
-    public RepeatOffenderRecord() {
-    }
+    public RepeatOffenderRecord() {}
 
-    public RepeatOffenderRecord(Long id, int totalCases, String lastincidentDate, String flagSeverity) {
-        this.id = id;
+    public RepeatOffenderRecord(StudentProfile studentProfile, Integer totalCases, String flagSeverity) {
+        this.studentProfile = studentProfile;
         this.totalCases = totalCases;
-        this.lastincidentDate = lastincidentDate;
         this.flagSeverity = flagSeverity;
     }
 
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public int getTotalCases() {
-        return totalCases;
-    }
-    public void setTotalCases(int totalCases) {
-        this.totalCases = totalCases;
-    }
-    public String getLastincidentDate() {
-        return lastincidentDate;
-    }
-    public void setLastincidentDate(String lastincidentDate) {
-        this.lastincidentDate = lastincidentDate;
-    }
-    public String getFlagSeverity() {
-        return flagSeverity;
-    }
-    public void setFlagSeverity(String flagSeverity) {
-        this.flagSeverity = flagSeverity;
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public StudentProfile getStudentProfile() { return studentProfile; }
+    public void setStudentProfile(StudentProfile studentProfile) { this.studentProfile = studentProfile; }
+
+    public Integer getTotalCases() { return totalCases; }
+    public void setTotalCases(Integer totalCases) { this.totalCases = totalCases; }
+
+    public LocalDate getFirstIncidentDate() { return firstIncidentDate; }
+    public void setFirstIncidentDate(LocalDate firstIncidentDate) { this.firstIncidentDate = firstIncidentDate; }
+
+    public String getFlagSeverity() { return flagSeverity; }
+    public void setFlagSeverity(String flagSeverity) { this.flagSeverity = flagSeverity; }
 }
