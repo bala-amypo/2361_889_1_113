@@ -6,7 +6,7 @@ import com.example.demo.entity.StudentProfile;
 import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
-import com.example.demo.service.RepeatOffenderCalculator;
+import com.example.demo.util.RepeatOffenderCalculator;
 import com.example.demo.service.RepeatOffenderRecordService;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -34,7 +34,7 @@ public class RepeatOffenderRecordServiceImpl implements RepeatOffenderRecordServ
         
         int totalCases = cases.size();
         String severity = repeatOffenderCalculator.calculateSeverity(totalCases);
-        boolean isRepeatOffender = repeatOffenderCalculator.isRepeatOffender(cases);
+        boolean isRepeatOffender = totalCases >= 2;
         
         studentProfile.setRepeatOffender(isRepeatOffender);
         studentProfileRepository.save(studentProfile);
