@@ -198,7 +198,6 @@ public class AcademicIntegrityApplicationTests {
         }
     }
 
-    // CRUD Tests (9-23)
     @Test(groups = "crud", priority = 9)
     public void testCreateStudentProfile() {
         StudentProfile s = sampleStudent(1L);
