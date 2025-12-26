@@ -1,44 +1,43 @@
 package com.example.demo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.example.demo.dto.ApiResponse;
 import com.example.demo.entity.IntegrityCase;
-import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.example.demo.service.IntegrityCaseService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/integrity-case") 
+@RequestMapping("/api/cases")
 public class IntegrityCaseController {
+    private final IntegrityCaseService integrityCaseService;
 
-    @Autowired
-    IntegrityCaseService src;
-
-    @PostMapping("/post")
-    public IntegrityCase postdata(@RequestBody IntegrityCase data) {
-        return src.savedata(data);
+    public IntegrityCaseController(IntegrityCaseService integrityCaseService) {
+        this.integrityCaseService = integrityCaseService;
     }
 
-    @GetMapping("/get")
-    public List<IntegrityCase> getdata() {
-        return src.retdata();
-    } 
-
-    @GetMapping("/getid/{id}")
-    public IntegrityCase getIdval(@PathVariable Long id){
-        return src.id(id);
+    @PostMapping
+    public ResponseEntity<IntegrityCase> createCase(@RequestBody IntegrityCase integrityCase) {
+        IntegrityCase created = integrityCaseService.createCase(integrityCase);
+        return ResponseEntity.ok(created);
     }
 
-    @PutMapping("/put/{id}")
-    public IntegrityCase putdata(@PathVariable Long id, @RequestBody IntegrityCase data){
-        data.setId(id);
-        return src.savedata(data);
+    @PutMapping("/{caseId}/status")
+    public ResponseEntity<ApiResponse> updateCaseStatus(@PathVariable Long caseId, @RequestParam String status) {
+        integrityCaseService.updateCaseStatus(caseId, status);
+        return ResponseEntity.ok(new ApiResponse(true, "Case status updated"));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deletedata(@PathVariable Long id){
-        src.remove(id);
-        return "deleted";
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<IntegrityCase>> getCasesByStudent(@PathVariable Long studentId) {
+        List<IntegrityCase> cases = integrityCaseService.getCasesByStudent(studentId);
+        return ResponseEntity.ok(cases);
+    }
+
+    @GetMapping("/{caseId}")
+    public ResponseEntity<IntegrityCase> getCaseById(@PathVariable Long caseId) {
+        Optional<IntegrityCase> caseOpt = integrityCaseService.getCaseById(caseId);
+        return caseOpt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

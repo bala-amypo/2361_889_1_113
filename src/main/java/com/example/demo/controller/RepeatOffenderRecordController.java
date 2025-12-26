@@ -1,44 +1,29 @@
 package com.example.demo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.demo.entity.RepeatOffenderRecord;
-import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.example.demo.entity.StudentProfile;
 import com.example.demo.service.RepeatOffenderRecordService;
+import com.example.demo.service.StudentProfileService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/repeat-offender")
+@RequestMapping("/api/repeat-offenders")
 public class RepeatOffenderRecordController {
 
-    @Autowired
-    RepeatOffenderRecordService src;
+    private final RepeatOffenderRecordService repeatOffenderRecordService;
+    private final StudentProfileService studentProfileService;
 
-    @PostMapping("/post")
-    public RepeatOffenderRecord postdata(@RequestBody RepeatOffenderRecord data) {
-        return src.savedata(data);
+    public RepeatOffenderRecordController(RepeatOffenderRecordService repeatOffenderRecordService,
+                                        StudentProfileService studentProfileService) {
+        this.repeatOffenderRecordService = repeatOffenderRecordService;
+        this.studentProfileService = studentProfileService;
     }
 
-    @GetMapping("/get")
-    public List<RepeatOffenderRecord> getdata() {
-        return src.retdata();
-    } 
-
-    @GetMapping("/getid/{id}")
-    public RepeatOffenderRecord getIdval(@PathVariable Long id){
-        return src.id(id);
-    }
-
-    @PutMapping("/put/{id}")
-    public RepeatOffenderRecord putdata(@PathVariable Long id, @RequestBody RepeatOffenderRecord data){
-        data.setId(id);
-        return src.savedata(data);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public String deletedata(@PathVariable Long id){
-        src.remove(id);
-        return "deleted";
+    @PostMapping("/recalculate/{studentId}")
+    public ResponseEntity<RepeatOffenderRecord> recalculateRecord(@PathVariable Long studentId) {
+        StudentProfile student = studentProfileService.getStudentById(studentId);
+        RepeatOffenderRecord record = repeatOffenderRecordService.recalculateRecord(student);
+        return ResponseEntity.ok(record);
     }
 }

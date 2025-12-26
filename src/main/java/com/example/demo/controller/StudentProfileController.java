@@ -1,44 +1,42 @@
 package com.example.demo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping; 
 import com.example.demo.entity.StudentProfile;
-import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.example.demo.service.StudentProfileService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
-@RequestMapping("/student-profile")
+@RequestMapping("/api/students")
 public class StudentProfileController {
 
-    @Autowired
-    StudentProfileService src;
+    private final StudentProfileService studentProfileService;
 
-    @PostMapping("/post")
-    public StudentProfile postdata(@RequestBody StudentProfile data) {
-        return src.savedata(data);
+    public StudentProfileController(StudentProfileService studentProfileService) {
+        this.studentProfileService = studentProfileService;
     }
 
-    @GetMapping("/get")
-    public List<StudentProfile> getdata() {
-        return src.retdata();
-    } 
-
-    @GetMapping("/getid/{id}")
-    public StudentProfile getIdval(@PathVariable Long id){
-        return src.id(id);
+    @PostMapping
+    public ResponseEntity<StudentProfile> createStudent(@RequestBody StudentProfile student) {
+        StudentProfile created = studentProfileService.createStudent(student);
+        return ResponseEntity.ok(created);
     }
 
-    @PutMapping("/put/{id}")
-    public StudentProfile putdata(@PathVariable Long id, @RequestBody StudentProfile data){
-        data.setId(id);
-        return src.savedata(data);
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentProfile> getStudentById(@PathVariable Long id) {
+        StudentProfile student = studentProfileService.getStudentById(id);
+        return ResponseEntity.ok(student);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deletedata(@PathVariable Long id){
-        src.remove(id);
-        return "deleted";
+    @GetMapping
+    public ResponseEntity<List<StudentProfile>> getAllStudents() {
+        List<StudentProfile> students = studentProfileService.getAllStudents();
+        return ResponseEntity.ok(students);
+    }
+
+    @PutMapping("/{studentId}/repeat-status")
+    public ResponseEntity<StudentProfile> updateRepeatStatus(@PathVariable Long studentId) {
+        StudentProfile updated = studentProfileService.updateRepeatOffenderStatus(studentId);
+        return ResponseEntity.ok(updated);
     }
 }
