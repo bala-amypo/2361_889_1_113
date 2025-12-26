@@ -1,47 +1,32 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.IntegrityCase;
-import com.example.demo.entity.RepeatOffenderRecord;
 import com.example.demo.entity.StudentProfile;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.IntegrityCaseRepository;
-import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
-import com.example.demo.util.RepeatOffenderCalculator;
 import com.example.demo.service.StudentProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentProfileServiceImpl implements StudentProfileService {
-    private final StudentProfileRepository studentProfileRepository;
-    private final IntegrityCaseRepository integrityCaseRepository;
-    private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
-    private final RepeatOffenderCalculator repeatOffenderCalculator;
 
-    public StudentProfileServiceImpl(StudentProfileRepository studentProfileRepository,
-                                   IntegrityCaseRepository integrityCaseRepository,
-                                   RepeatOffenderRecordRepository repeatOffenderRecordRepository,
-                                   RepeatOffenderCalculator repeatOffenderCalculator) {
-        this.studentProfileRepository = studentProfileRepository;
-        this.integrityCaseRepository = integrityCaseRepository;
-        this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
-        this.repeatOffenderCalculator = repeatOffenderCalculator;
-    }
+    @Autowired
+    private StudentProfileRepository studentProfileRepository;
+
+    @Autowired
+    private IntegrityCaseRepository integrityCaseRepository;
 
     @Override
-    public StudentProfile createStudent(StudentProfile studentProfile) {
-        studentProfile.setRepeatOffender(false);
-        return studentProfileRepository.save(studentProfile);
+    public StudentProfile createStudent(StudentProfile student) {
+        return studentProfileRepository.save(student);
     }
 
     @Override
     public StudentProfile getStudentById(Long id) {
-        if (id == null) {
-            throw new ResourceNotFoundException("Student ID cannot be null");
-        }
-        return studentProfileRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        return studentProfileRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -50,15 +35,20 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     }
 
     @Override
-    public StudentProfile updateRepeatOffenderStatus(Long studentId) {
-        StudentProfile profile = getStudentById(studentId);
-        List<IntegrityCase> cases = integrityCaseRepository.findByStudentProfile_Id(studentId);
-        
-        RepeatOffenderRecord record = repeatOffenderCalculator.computeRepeatOffenderRecord(profile, cases);
-        
-        profile.setRepeatOffender(record.getTotalCases() >= 2);
-        
-        repeatOffenderRecordRepository.save(record);
-        return studentProfileRepository.save(profile);
+    public void updateRepeatOffenderStatus(Long studentId) {
+        Optional<StudentProfile> studentOpt = studentProfileRepository.findById(studentId);
+        if (studentOpt.isPresent()) {
+            StudentProfile student = studentOpt.get();
+            long caseCount = integrityCaseRepository.countByStudentId(studentId);
+
+           
+            if (caseCount >= 2) {
+                student.setRepeatOffender(true);
+            } else {
+                student.setRepeatOffender(false);
+            }
+            
+            studentProfileRepository.save(student);
+        }
     }
 }
