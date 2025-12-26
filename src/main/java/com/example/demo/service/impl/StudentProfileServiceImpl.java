@@ -1,11 +1,12 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.StudentProfile;
+import com.example.demo.exception.ResourceNotFoundException; 
 import com.example.demo.repository.IntegrityCaseRepository;
-import com.example.demo.repository.RepeatOffenderRecordRepository; // Added Import
+import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
-import com.example.demo.util.RepeatOffenderCalculator; // Added Import
+import com.example.demo.util.RepeatOffenderCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +16,11 @@ import java.util.Optional;
 @Service
 public class StudentProfileServiceImpl implements StudentProfileService {
 
-    @Autowired
-    private StudentProfileRepository studentProfileRepository;
+    private final StudentProfileRepository studentProfileRepository;
+    private final IntegrityCaseRepository integrityCaseRepository;
+    private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
+    private final RepeatOffenderCalculator repeatOffenderCalculator;
 
-    @Autowired
-    private IntegrityCaseRepository integrityCaseRepository;
-    
-    private RepeatOffenderRecordRepository repeatOffenderRecordRepository;
-    private RepeatOffenderCalculator repeatOffenderCalculator;
-
-    
     @Autowired
     public StudentProfileServiceImpl(StudentProfileRepository studentProfileRepository,
                                      IntegrityCaseRepository integrityCaseRepository,
@@ -38,12 +34,19 @@ public class StudentProfileServiceImpl implements StudentProfileService {
 
     @Override
     public StudentProfile createStudent(StudentProfile student) {
+        if (student.getRepeatOffender() == null) {
+            student.setRepeatOffender(false);
+        }
         return studentProfileRepository.save(student);
     }
 
     @Override
     public StudentProfile getStudentById(Long id) {
-        return studentProfileRepository.findById(id).orElse(null);
+        if (id == null) {
+             throw new ResourceNotFoundException("ID cannot be null");
+        }
+        return studentProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
     }
 
     @Override
