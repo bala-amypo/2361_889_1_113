@@ -69,7 +69,6 @@ public class AcademicIntegrityApplicationTests {
                 userRepository, roleRepository, passwordEncoder, authenticationManager, jwtTokenProvider);
     }
 
-    // --- Helpers ---
     private StudentProfile sampleStudent(Long id) {
         StudentProfile s = new StudentProfile();
         s.setId(id); s.setStudentId("S" + id); s.setName("Student " + id);
@@ -100,7 +99,6 @@ public class AcademicIntegrityApplicationTests {
         return p;
     }
 
-    // --- Servlet Tests (1-8) ---
     private static class TestableServlet extends BasicServlet {
         @Override public void doGet(HttpServletRequest req, HttpServletResponse resp) { try { super.doGet(req, resp); } catch (Exception e) { throw new RuntimeException(e); } }
         @Override public void doPost(HttpServletRequest req, HttpServletResponse resp) { try { super.doPost(req, resp); } catch (Exception e) { throw new RuntimeException(e); } }
@@ -165,7 +163,6 @@ public void testSubmitEvidenceSuccess() {
     IntegrityCase c = sampleCase(1L, sampleStudent(1L));
     EvidenceRecord e = sampleEvidence(1L, c);
     
-    // --- FIX: Ensure the case is explicitly attached ---
     e.setIntegrityCase(c); 
     
     when(integrityCaseRepository.existsById(1L)).thenReturn(true);
