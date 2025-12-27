@@ -5,7 +5,7 @@ import com.example.demo.entity.RepeatOffenderRecord;
 import com.example.demo.entity.IntegrityCase;
 
 import java.util.List;
-@Component
+
 public class RepeatOffenderCalculator {
 
     public RepeatOffenderRecord computeRepeatOffenderRecord(StudentProfile student, List<IntegrityCase> cases) {
