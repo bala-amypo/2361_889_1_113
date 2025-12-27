@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.StudentProfile;
+import com.example.demo.entity.IntegrityCase;
 import com.example.demo.entity.RepeatOffenderRecord;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.IntegrityCaseRepository;
@@ -54,18 +55,19 @@ public class StudentProfileServiceImpl implements StudentProfileService {
         StudentProfile student = studentProfileRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
 
-        long caseCount = integrityCaseRepository.countByStudentProfile_Id(studentId);
+        // Fetch all cases for the student
+        List<IntegrityCase> cases = integrityCaseRepository.findByStudentProfile(student);
 
-        boolean isRepeatOffender = repeatOffenderCalculator.isRepeatOffender(caseCount);
-        String severity = repeatOffenderCalculator.calculateSeverity(caseCount);
+        // Compute repeat offender record using the list of cases
+        RepeatOffenderRecord record = repeatOffenderCalculator.computeRepeatOffenderRecord(student, cases);
 
-        student.setRepeatOffender(isRepeatOffender);
+        // Update student repeat offender status based on record
+        student.setRepeatOffender(record.getTotalCases() >= 2);
 
-        if (isRepeatOffender) {
+        // Save RepeatOffenderRecord if student is a repeat offender
+        if (student.getRepeatOffender()) {
             repeatOffenderRecordRepository.findByStudentProfile(student)
-                    .orElseGet(() -> repeatOffenderRecordRepository.save(
-                            repeatOffenderCalculator.computeRepeatOffenderRecord(student, caseCount)
-                    ));
+                    .orElseGet(() -> repeatOffenderRecordRepository.save(record));
         }
 
         return studentProfileRepository.save(student);

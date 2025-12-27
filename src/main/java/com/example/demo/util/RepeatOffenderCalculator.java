@@ -1,31 +1,26 @@
-package com.example.demo.util;
-
+import com.example.demo.entity.IntegrityCase;
 import com.example.demo.entity.RepeatOffenderRecord;
 import com.example.demo.entity.StudentProfile;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
-@Component
 public class RepeatOffenderCalculator {
 
-    // Determine if student is repeat offender based on number of cases
-    public boolean isRepeatOffender(long totalCases) {
-        return totalCases >= 2; // 2 or more cases -> repeat offender
+    public boolean isRepeatOffender(List<IntegrityCase> cases) {
+        return cases.size() >= 2; // or your rule
     }
 
-    // Calculate severity based on number of cases
-    public String calculateSeverity(long totalCases) {
-        if (totalCases == 1) return "LOW";
-        if (totalCases == 2) return "MEDIUM";
-        if (totalCases >= 4) return "HIGH";
-        return "MEDIUM";
+    public String calculateSeverity(List<IntegrityCase> cases) {
+        int count = cases.size();
+        if (count >= 4) return "HIGH";
+        if (count >= 2) return "MEDIUM";
+        return "LOW";
     }
 
-    // Compute RepeatOffenderRecord entity from student and case count
-    public RepeatOffenderRecord computeRepeatOffenderRecord(StudentProfile student, long totalCases) {
+    public RepeatOffenderRecord computeRepeatOffenderRecord(StudentProfile student, List<IntegrityCase> cases) {
         RepeatOffenderRecord record = new RepeatOffenderRecord();
         record.setStudentProfile(student);
-        record.setTotalCases((int) totalCases); // cast long -> int
-        record.setFlagSeverity(calculateSeverity(totalCases));
+        record.setTotalCases(cases.size());
+        record.setFlagSeverity(calculateSeverity(cases));
         return record;
     }
 }
