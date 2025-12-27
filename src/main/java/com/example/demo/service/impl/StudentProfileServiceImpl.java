@@ -6,6 +6,7 @@ import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
+import com.example.demo.util.RepeatOffenderCalculator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,13 +17,16 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     private final StudentProfileRepository studentProfileRepository;
     private final IntegrityCaseRepository integrityCaseRepository;
     private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
+    private final RepeatOffenderCalculator repeatOffenderCalculator;
 
     public StudentProfileServiceImpl(StudentProfileRepository studentProfileRepository,
                                      IntegrityCaseRepository integrityCaseRepository,
-                                     RepeatOffenderRecordRepository repeatOffenderRecordRepository) {
+                                     RepeatOffenderRecordRepository repeatOffenderRecordRepository,
+                                     RepeatOffenderCalculator repeatOffenderCalculator) {
         this.studentProfileRepository = studentProfileRepository;
         this.integrityCaseRepository = integrityCaseRepository;
         this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
+        this.repeatOffenderCalculator = repeatOffenderCalculator;
     }
 
     @Override
