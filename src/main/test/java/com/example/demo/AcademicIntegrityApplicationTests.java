@@ -130,11 +130,11 @@ public class AcademicIntegrityApplicationTests {
         verify(studentProfileRepository).save(any(StudentProfile.class));
     }
 
-    // FIX 1: Set input status to NULL
+    // FIX 1: Set input status to NULL explicitly
     @Test(groups = "crud", priority = 10)
     public void testCreateStudentProfileSetsRepeatOffenderFalse() {
         StudentProfile s = sampleStudent(2L);
-        // FIX: Must be null for the service to trigger the "set false" logic
+        // CRITICAL FIX: The service only changes it if it is NULL.
         s.setRepeatOffender(null);
         
         when(studentProfileRepository.save(any(StudentProfile.class))).thenAnswer(i -> i.getArgument(0));
@@ -162,14 +162,14 @@ public class AcademicIntegrityApplicationTests {
         Assert.assertEquals(studentProfileService.getAllStudents().size(), 2);
     }
 
-    // FIX 2: Mock the correct method (countByStudentProfile_Id) for ID 4L
+    // FIX 2: Mock countByStudentProfile_Id
     @Test(groups = "crud", priority = 14)
     public void testUpdateRepeatOffenderStatusWithTwoCasesMarksRepeat() {
         StudentProfile s = sampleStudent(4L);
         
         when(studentProfileRepository.findById(4L)).thenReturn(Optional.of(s));
         
-        // FIX: Mocking the method specifically for ID 4
+        // CRITICAL FIX: The service calls this specific method!
         when(integrityCaseRepository.countByStudentProfile_Id(4L)).thenReturn(2L);
         
         when(studentProfileRepository.save(any(StudentProfile.class))).thenAnswer(i -> i.getArgument(0));
@@ -230,14 +230,14 @@ public class AcademicIntegrityApplicationTests {
         Assert.assertFalse(integrityCaseService.getCaseById(40L).isPresent());
     }
 
-    // FIX 3: Ensure Case is attached to Evidence
+    // FIX 3: Attach Case to Evidence
     @Test(groups = "crud", priority = 22)
     public void testSubmitEvidenceSuccess() {
         StudentProfile s = sampleStudent(10L);
         IntegrityCase c = sampleCase(50L, s);
         EvidenceRecord e = sampleEvidence(1L, c);
         
-        // FIX: Explicitly set the case
+        // CRITICAL FIX: Ensure the connection is set
         e.setIntegrityCase(c);
         
         when(integrityCaseRepository.existsById(50L)).thenReturn(true); 
@@ -260,7 +260,7 @@ public class AcademicIntegrityApplicationTests {
 
     // --- Dependency Injection Tests (24-31) ---
 
-    // FIX 4: Verification Mismatch for ID 13L
+    // FIX 4: Correct Verification
     @Test(groups = "di", priority = 25)
     public void testIntegrityCaseServiceUsesStudentRepositoryOnCreate() {
         StudentProfile s = sampleStudent(13L);
@@ -270,7 +270,7 @@ public class AcademicIntegrityApplicationTests {
 
         integrityCaseService.createCase(c);
         
-        // FIX: Verify the Service actually calls save on the CASE repository
+        // CRITICAL FIX: Verify the case repo interaction, not student repo
         verify(integrityCaseRepository).save(c);
     }
 
@@ -308,7 +308,6 @@ public class AcademicIntegrityApplicationTests {
     }
 
     // --- Hibernate/JPA/Security/HQL Tests (32-70) ---
-    // Keeping these concise as they were passing in your logs
     @Test(groups = "hibernate", priority = 32) public void testStudentProfileDefaults() { Assert.assertFalse(new StudentProfile().getRepeatOffender()); }
     @Test(groups = "hibernate", priority = 33) public void testIntegrityCaseDefaultStatusOpen() { Assert.assertEquals(new IntegrityCase().getStatus(), "OPEN"); }
     @Test(groups = "hibernate", priority = 34) public void testEvidenceRecordHasTimestamp() { Assert.assertNotNull(new EvidenceRecord().getSubmittedAt()); }
