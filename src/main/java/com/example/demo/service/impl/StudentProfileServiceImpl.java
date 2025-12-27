@@ -58,10 +58,11 @@ public class StudentProfileServiceImpl implements StudentProfileService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Student not found with id: " + studentId));
 
-        long caseCount = integrityCaseRepository.countByStudentProfile_Id(studentId);
+        // Convert to int to match RepeatOffenderCalculator expectations
+        int caseCountInt = (int) integrityCaseRepository.countByStudentProfile_Id(studentId);
 
-        boolean isRepeatOffender = repeatOffenderCalculator.isRepeatOffender(caseCount);
-        String severity = repeatOffenderCalculator.calculateSeverity(caseCount);
+        boolean isRepeatOffender = repeatOffenderCalculator.isRepeatOffender(caseCountInt);
+        String severity = repeatOffenderCalculator.calculateSeverity(caseCountInt);
 
         student.setRepeatOffender(isRepeatOffender);
 
@@ -71,7 +72,7 @@ public class StudentProfileServiceImpl implements StudentProfileService {
                             repeatOffenderRecordRepository.save(
                                     new RepeatOffenderRecord(
                                             student,
-                                            (int) caseCount,
+                                            caseCountInt,
                                             severity
                                     )
                             ));
