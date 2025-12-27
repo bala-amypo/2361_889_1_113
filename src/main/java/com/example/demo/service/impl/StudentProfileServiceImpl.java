@@ -7,6 +7,7 @@ import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
+import com.example.demo.util.RepeatOffenderCalculator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +18,16 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     private final StudentProfileRepository studentProfileRepository;
     private final IntegrityCaseRepository integrityCaseRepository;
     private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
+    private final RepeatOffenderCalculator repeatOffenderCalculator;
 
     public StudentProfileServiceImpl(StudentProfileRepository studentProfileRepository,
                                      IntegrityCaseRepository integrityCaseRepository,
-                                     RepeatOffenderRecordRepository repeatOffenderRecordRepository) {
+                                     RepeatOffenderRecordRepository repeatOffenderRecordRepository,
+                                     RepeatOffenderCalculator repeatOffenderCalculator) {
         this.studentProfileRepository = studentProfileRepository;
         this.integrityCaseRepository = integrityCaseRepository;
         this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
+        this.repeatOffenderCalculator = repeatOffenderCalculator;
     }
 
     @Override
@@ -49,24 +53,28 @@ public class StudentProfileServiceImpl implements StudentProfileService {
 
     @Override
     public StudentProfile updateRepeatOffenderStatus(Long studentId) {
+
         StudentProfile student = studentProfileRepository.findById(studentId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Student not found with id: " + studentId));
 
         long caseCount = integrityCaseRepository.countByStudentProfile_Id(studentId);
 
-        boolean isRepeat = caseCount >= 2;
-        student.setRepeatOffender(isRepeat);
+        boolean isRepeatOffender = repeatOffenderCalculator.isRepeatOffender(caseCount);
+        String severity = repeatOffenderCalculator.calculateSeverity(caseCount);
 
-        if (isRepeat) {
+        student.setRepeatOffender(isRepeatOffender);
+
+        if (isRepeatOffender) {
             repeatOffenderRecordRepository.findByStudentProfile(student)
-                    .orElseGet(() -> repeatOffenderRecordRepository.save(
-                            new RepeatOffenderRecord(
-                                    student,
-                                    (int) caseCount,
-                                    "MEDIUM"
-                            )
-                    ));
+                    .orElseGet(() ->
+                            repeatOffenderRecordRepository.save(
+                                    new RepeatOffenderRecord(
+                                            student,
+                                            (int) caseCount,
+                                            severity
+                                    )
+                            ));
         }
 
         return studentProfileRepository.save(student);
