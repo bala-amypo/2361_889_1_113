@@ -60,16 +60,13 @@ public class StudentProfileServiceImpl implements StudentProfileService {
 
         if (isRepeat) {
             repeatOffenderRecordRepository.findByStudentProfile(student)
-                    .orElseGet(() ->
-                            repeatOffenderRecordRepository.save(
-                                    new RepeatOffenderRecord(
-                                            null,
-                                            (int) caseCount,
-                                            null,
-                                            "MEDIUM"
-                                    )
+                    .orElseGet(() -> repeatOffenderRecordRepository.save(
+                            new RepeatOffenderRecord(
+                                    student,
+                                    (int) caseCount,
+                                    "MEDIUM"
                             )
-                    );
+                    ));
         }
 
         return studentProfileRepository.save(student);
