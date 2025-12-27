@@ -55,16 +55,12 @@ public class StudentProfileServiceImpl implements StudentProfileService {
         StudentProfile student = studentProfileRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
 
-        // Fetch all cases for the student
         List<IntegrityCase> cases = integrityCaseRepository.findByStudentProfile(student);
 
-        // Compute repeat offender record using the list of cases
         RepeatOffenderRecord record = repeatOffenderCalculator.computeRepeatOffenderRecord(student, cases);
 
-        // Update student repeat offender status based on record
         student.setRepeatOffender(record.getTotalCases() >= 2);
 
-        // Save RepeatOffenderRecord if student is a repeat offender
         if (student.getRepeatOffender()) {
             repeatOffenderRecordRepository.findByStudentProfile(student)
                     .orElseGet(() -> repeatOffenderRecordRepository.save(record));
