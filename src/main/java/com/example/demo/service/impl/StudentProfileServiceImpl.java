@@ -6,8 +6,6 @@ import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.repository.RepeatOffenderRecordRepository;
 import com.example.demo.repository.StudentProfileRepository;
 import com.example.demo.service.StudentProfileService;
-import com.example.demo.util.RepeatOffenderCalculator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,17 +16,13 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     private final StudentProfileRepository studentProfileRepository;
     private final IntegrityCaseRepository integrityCaseRepository;
     private final RepeatOffenderRecordRepository repeatOffenderRecordRepository;
-    private final RepeatOffenderCalculator repeatOffenderCalculator;
 
-    @Autowired
     public StudentProfileServiceImpl(StudentProfileRepository studentProfileRepository,
                                      IntegrityCaseRepository integrityCaseRepository,
-                                     RepeatOffenderRecordRepository repeatOffenderRecordRepository,
-                                     RepeatOffenderCalculator repeatOffenderCalculator) {
+                                     RepeatOffenderRecordRepository repeatOffenderRecordRepository) {
         this.studentProfileRepository = studentProfileRepository;
         this.integrityCaseRepository = integrityCaseRepository;
         this.repeatOffenderRecordRepository = repeatOffenderRecordRepository;
-        this.repeatOffenderCalculator = repeatOffenderCalculator;
     }
 
     @Override
@@ -59,14 +53,9 @@ public class StudentProfileServiceImpl implements StudentProfileService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Student not found with id: " + studentId));
 
-        int caseCount = (student.getCases() == null)
-                ? 0
-                : student.getCases().size();
+        long caseCount = integrityCaseRepository.countByStudentProfile_Id(studentId);
 
-        boolean isRepeatOffender =
-                repeatOffenderCalculator.isRepeatOffender(caseCount);
-
-        student.setRepeatOffender(isRepeatOffender);
+        student.setRepeatOffender(caseCount >= 2);
 
         return studentProfileRepository.save(student);
     }
