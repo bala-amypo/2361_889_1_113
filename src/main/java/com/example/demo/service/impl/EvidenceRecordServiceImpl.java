@@ -23,12 +23,6 @@ public class EvidenceRecordServiceImpl implements EvidenceRecordService {
         if (evidenceRecord == null || evidenceRecord.getIntegrityCase() == null) {
             throw new IllegalArgumentException("Integrity case is required");
         }
-
-        Long caseId = evidenceRecord.getIntegrityCase().getId();
-        if (caseId == null || !integrityCaseRepository.existsById(caseId)) {
-            throw new IllegalArgumentException("Invalid integrity case");
-        }
-
         return evidenceRecordRepository.save(evidenceRecord);
     }
 }
