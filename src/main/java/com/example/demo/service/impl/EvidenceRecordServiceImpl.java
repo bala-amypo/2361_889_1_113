@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.EvidenceRecord;
 import com.example.demo.repository.EvidenceRecordRepository;
 import com.example.demo.repository.IntegrityCaseRepository;
 import com.example.demo.service.EvidenceRecordService;
@@ -15,5 +16,19 @@ public class EvidenceRecordServiceImpl implements EvidenceRecordService {
                                      IntegrityCaseRepository integrityCaseRepository) {
         this.evidenceRecordRepository = evidenceRecordRepository;
         this.integrityCaseRepository = integrityCaseRepository;
+    }
+
+    @Override
+    public EvidenceRecord submitEvidence(EvidenceRecord evidenceRecord) {
+        if (evidenceRecord == null || evidenceRecord.getIntegrityCase() == null) {
+            throw new IllegalArgumentException("Integrity case is required");
+        }
+
+        Long caseId = evidenceRecord.getIntegrityCase().getId();
+        if (caseId == null || !integrityCaseRepository.existsById(caseId)) {
+            throw new IllegalArgumentException("Invalid integrity case");
+        }
+
+        return evidenceRecordRepository.save(evidenceRecord);
     }
 }
