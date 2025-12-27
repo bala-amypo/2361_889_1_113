@@ -105,7 +105,7 @@ public class AcademicIntegrityApplicationTests {
         return p;
     }
 
-    // --- Servlet Tests (1-8) ---
+    // --- Servlet Tests ---
     private static class TestableServlet extends BasicServlet {
         @Override public void doGet(HttpServletRequest req, HttpServletResponse resp) { try { super.doGet(req, resp); } catch (Exception e) { throw new RuntimeException(e); } }
         @Override public void doPost(HttpServletRequest req, HttpServletResponse resp) { try { super.doPost(req, resp); } catch (Exception e) { throw new RuntimeException(e); } }
@@ -237,7 +237,7 @@ public class AcademicIntegrityApplicationTests {
         IntegrityCase c = sampleCase(50L, s);
         EvidenceRecord e = sampleEvidence(1L, c);
         
-        // CRITICAL FIX: Ensure the connection is set
+        // CRITICAL FIX: Explicitly set the case
         e.setIntegrityCase(c);
         
         when(integrityCaseRepository.existsById(50L)).thenReturn(true); 
