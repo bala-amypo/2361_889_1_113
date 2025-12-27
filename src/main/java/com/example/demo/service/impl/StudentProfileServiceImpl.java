@@ -38,12 +38,9 @@ public class StudentProfileServiceImpl implements StudentProfileService {
 
     @Override
     public StudentProfile getStudentById(Long id) {
-        if (id == null) {
-            throw new ResourceNotFoundException("ID cannot be null");
-        }
+        if (id == null) throw new ResourceNotFoundException("ID cannot be null");
         return studentProfileRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Student not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
     }
 
     @Override
@@ -55,27 +52,20 @@ public class StudentProfileServiceImpl implements StudentProfileService {
     public StudentProfile updateRepeatOffenderStatus(Long studentId) {
 
         StudentProfile student = studentProfileRepository.findById(studentId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Student not found with id: " + studentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + studentId));
 
-        // Convert to int to match RepeatOffenderCalculator expectations
-        int caseCountInt = (int) integrityCaseRepository.countByStudentProfile_Id(studentId);
+        long caseCount = integrityCaseRepository.countByStudentProfile_Id(studentId);
 
-        boolean isRepeatOffender = repeatOffenderCalculator.isRepeatOffender(caseCountInt);
-        String severity = repeatOffenderCalculator.calculateSeverity(caseCountInt);
+        boolean isRepeatOffender = repeatOffenderCalculator.isRepeatOffender(caseCount);
+        String severity = repeatOffenderCalculator.calculateSeverity(caseCount);
 
         student.setRepeatOffender(isRepeatOffender);
 
         if (isRepeatOffender) {
             repeatOffenderRecordRepository.findByStudentProfile(student)
-                    .orElseGet(() ->
-                            repeatOffenderRecordRepository.save(
-                                    new RepeatOffenderRecord(
-                                            student,
-                                            caseCountInt,
-                                            severity
-                                    )
-                            ));
+                    .orElseGet(() -> repeatOffenderRecordRepository.save(
+                            repeatOffenderCalculator.computeRepeatOffenderRecord(student, caseCount)
+                    ));
         }
 
         return studentProfileRepository.save(student);
